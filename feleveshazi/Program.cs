@@ -10,7 +10,7 @@ namespace feleveshazi
     {
         static void Main(string[] args)
         {
-
+            Console.WriteLine("nemtudom hogy mi a fasz van mostmar tenyleg");
         }
     }
 }
