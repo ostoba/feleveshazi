@@ -8,16 +8,21 @@ namespace feleveshazi
 {
     internal class Map
     {
+        public int mapHossz { get; set; }
+        public Map(int mapHossz)
+        {
+            this.mapHossz = mapHossz;
+        }
         public void MapKiiratas()
         { 
             Console.SetCursorPosition(0, 0);
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < mapHossz; i++)
             {
                 Console.Write('-');
             }
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < mapHossz; i++)
             {
-                Console.SetCursorPosition(i, 5);
+                Console.SetCursorPosition(i, 6);
                 Console.Write('-');
             }
         }

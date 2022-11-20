@@ -8,30 +8,38 @@ namespace feleveshazi
 {
     class Tower
     {
-        public int i { get; set;}
         public int j { get; set; }
-        public int hatotavolsag { get; set; }
-        //1 - piros, 2 - narancs, 3 - zold
+        public int range { get; set; }
         public int cooldown { get; set; }
 
         public Tower(Random r, int[] helyek)
         {
-            i = 5;
-            int hely = r.Next(0,100);
+            int hely = r.Next(0,50);
             while (vanEMarOttTower(helyek,hely))
             {
-                hely = r.Next(0,100);
+                hely = r.Next(0,50);
             }
-            j= hely; 
-            hatotavolsag = r.Next(1, 3);
+            j= hely;
+            range = r.Next(1, 4);
             cooldown = 2;
         }
 
-        public void Kiiratas(Random r)
+        public void towerKiiratas(Random r)
         {
-            Console.SetCursorPosition(this.j, this.i);
+            Console.SetCursorPosition(this.j, 6);
             //ConsoleColor szin = (ConsoleColor)r.Next(1, 16);
-            Console.ForegroundColor = ConsoleColor.Cyan;
+            if (range == 1)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
+            else if (range==2)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
             Console.Write('O');
             Console.ResetColor();
             Console.SetCursorPosition(0,0);
@@ -39,6 +47,10 @@ namespace feleveshazi
         public bool vanEMarOttTower(int[] helyek, int j)
         {
             return helyek.Contains(j);
+        }
+        public void loves()
+        {
+
         }
     }
 }

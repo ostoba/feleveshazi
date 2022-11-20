@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace feleveshazi
 {
@@ -12,8 +13,9 @@ namespace feleveshazi
         {
             Tower[] towerek = towerLetrehozas();
             Map map = mapLetrehozas();
-            map.MapKiiratas();
-            towerKiiratas(towerek);
+            Zombie[] zombik = zombieLetrehozas();
+            Zombie tesztzombie = new Zombie();
+            Jatek(tesztzombie, map, towerek);
             Console.ReadLine();
         }
         static Tower[] towerLetrehozas()
@@ -34,19 +36,44 @@ namespace feleveshazi
             Random r = new Random();
             for (int i = 0; i < towerek.Length; i++)
             {
-                //Console.Write("i {0} j {1}", towerek[i].i, towerek[i].j);
-                //Console.WriteLine();
-                towerek[i].Kiiratas(r);
+                towerek[i].towerKiiratas(r);
             }
         }
         static Map mapLetrehozas()
         {
-            Map map = new Map();
+            Map map = new Map(50);
             return map;
         }
-        static void mapKiiratas(Map map)
+        static Zombie[] zombieLetrehozas()
+        {
+            Zombie[] zombik = new Zombie[5];
+            for (int i = 0; i < zombik.Length; i++)
+            {
+                zombik[i] = new Zombie();
+            }
+            return zombik;
+        }
+        static void Jatek(Zombie zombik, Map map, Tower[] towerek)
         {
             map.MapKiiratas();
+            towerKiiratas(towerek);
+            Console.SetCursorPosition(0, 10);
+            Console.WriteLine("Indulhat a jatek? ('Start')");
+            string asd = Console.ReadLine();
+            if (asd=="Start")
+            {
+                while (!zombik.beErt(map))
+                {
+                    Console.Clear();
+                    zombik.lepes();
+                    zombik.zombieKiiratas();
+                    map.MapKiiratas();
+                    towerKiiratas(towerek);
+                    Thread.Sleep(300);
+
+                }
+            }
         }
+
     }
 }
