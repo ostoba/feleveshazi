@@ -14,8 +14,7 @@ namespace feleveshazi
             Tower[] towerek = towerLetrehozas();
             Map map = mapLetrehozas();
             Zombie[] zombik = zombieLetrehozas();
-            Zombie tesztzombie = new Zombie();
-            Jatek(tesztzombie, map, towerek);
+            Jatek(zombik, map, towerek);
             Console.ReadLine();
         }
         static Tower[] towerLetrehozas()
@@ -53,7 +52,7 @@ namespace feleveshazi
             }
             return zombik;
         }
-        static void Jatek(Zombie zombik, Map map, Tower[] towerek)
+        static void Jatek(Zombie[] zombik, Map map, Tower[] towerek)
         {
             map.MapKiiratas();
             towerKiiratas(towerek);
@@ -62,18 +61,62 @@ namespace feleveshazi
             string asd = Console.ReadLine();
             if (asd=="Start")
             {
-                while (!zombik.beErt(map))
+                while (!jatekVege(zombik, map))
                 {
+                    towerLoves(towerek, zombik, map);
+                    //cooldown ++, lo a tower ha 0 a cd, range-n beluli zombiekat
                     Console.Clear();
-                    zombik.lepes();
-                    zombik.zombieKiiratas();
+                    zombikLeptetese(zombik,towerek);
+                    zombiKiiratas(zombik);
                     map.MapKiiratas();
+                    Console.WriteLine();
+                    Console.WriteLine("tower cd {0} indexe {1}", towerek[0].cooldown, towerek[0].j);
+                    Console.WriteLine("tower cd {0} indexe {1}", towerek[1].cooldown, towerek[1].j);
+                    Console.WriteLine("tower cd {0} indexe {1}", towerek[2].cooldown, towerek[2].j);
+                    Console.WriteLine("tower cd {0} indexe {1}", towerek[3].cooldown, towerek[3].j);
+                    Console.WriteLine("tower cd {0} indexe {1}", towerek[4].cooldown, towerek[4].j);
                     towerKiiratas(towerek);
                     Thread.Sleep(300);
-
                 }
             }
         }
-
+        static bool jatekVege(Zombie[] zombik, Map map)
+        {
+            //beert egy zombie, vagy nem maradt zombie
+            bool vegevan = false;
+            int[] zombikIndexe = new int[zombik.Length];
+            for (int i = 0; i < zombik.Length; i++)
+            {
+                zombikIndexe[i] = zombik[i].index;
+            }
+            if (zombikIndexe.Contains(map.mapHossz-1))
+            {
+                return true;
+            }
+            return vegevan;
+        }
+        static void zombikLeptetese(Zombie[] zombik, Tower[] towerek)
+        {
+            for (int i = 0; i < zombik.Length; i++)
+            {
+                zombik[i].lepes();
+                towerek[i].cooldown--;
+            }
+            
+        }
+        static void zombiKiiratas(Zombie[] zombik)
+        {
+            for (int i = 0; i < zombik.Length; i++)
+            {
+                zombik[i].zombieKiiratas();
+            }
+        }
+        static void towerLoves(Tower[] towerek, Zombie[] zombik, Map map)
+        {
+            for (int i = 0; i < towerek.Length; i++)
+            {
+                towerek[i].loves(zombik, map);
+            }
+        }
     }
 }

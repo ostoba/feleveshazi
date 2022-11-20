@@ -14,14 +14,14 @@ namespace feleveshazi
 
         public Tower(Random r, int[] helyek)
         {
-            int hely = r.Next(0,50);
-            while (vanEMarOttTower(helyek,hely))
+            int hely = r.Next(0, 50);
+            while (vanEMarOttTower(helyek, hely))
             {
-                hely = r.Next(0,50);
+                hely = r.Next(0, 50);
             }
-            j= hely;
+            j = hely;
             range = r.Next(1, 4);
-            cooldown = 2;
+            cooldown = 0;
         }
 
         public void towerKiiratas(Random r)
@@ -32,7 +32,7 @@ namespace feleveshazi
             {
                 Console.ForegroundColor = ConsoleColor.Red;
             }
-            else if (range==2)
+            else if (range == 2)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
             }
@@ -42,15 +42,31 @@ namespace feleveshazi
             }
             Console.Write('O');
             Console.ResetColor();
-            Console.SetCursorPosition(0,0);
+            Console.SetCursorPosition(0, 0);
         }
         public bool vanEMarOttTower(int[] helyek, int j)
         {
             return helyek.Contains(j);
         }
-        public void loves()
-        {
 
+        public bool vanEZombie(Zombie[] zombik)
+        {
+            return false;
+        }
+        public void loves(Zombie[] Zombik,Map map)
+        {
+            for (int i = 0; i < Zombik.Length; i++)
+            {
+                if (this.j-range>-1 && map.mapHossz > this.j + range && this.cooldown == 0)
+                {
+                    if (Zombik[i].index == this.j  || Zombik[i].index>=this.j-range || Zombik[i].index<=this.j+range)
+                    {
+                        //ha lottek
+                        Zombik[i].index = -1;
+                        cooldown = 2;
+                    }
+                }
+            }
         }
     }
 }

@@ -16,16 +16,22 @@ namespace feleveshazi
         }
         public void lepes()
         {
-            this.index += 1;
+            if (this.index!=-1)
+            {
+                this.index++;
+            }
         }
         public void zombieKiiratas()
         {
-            Console.SetCursorPosition(this.index, 3);
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.Write('M');
-            Console.ResetColor();
+            if (this.index!=-1)
+            {
+                Console.SetCursorPosition(this.index, 3);
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.Write('M');
+                Console.ResetColor();
+            }
         }
-        public bool beErt(Map map)
+        public bool beErtE(Map map)
         {
             return index == map.mapHossz-1;
         }
