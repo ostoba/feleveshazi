@@ -11,20 +11,20 @@ namespace feleveshazi
     {
         static void Main(string[] args)
         {
-            Tower[] towerek = towerLetrehozas();
             Map map = mapLetrehozas();
+            Tower[] towerek = towerLetrehozas(map);
             Zombie[] zombik = zombieLetrehozas();
             Jatek(zombik, map, towerek);
             Console.ReadLine();
         }
-        static Tower[] towerLetrehozas()
+        static Tower[] towerLetrehozas(Map map)
         {
             Random r = new Random();
             Tower[] towerek = new Tower[5];
             int[] helyek = new int[5] { -1, -1, -1, -1, -1 };
             for (int i = 0; i < towerek.Length; i++)
             {
-                towerek[i] = new Tower(r, helyek);
+                towerek[i] = new Tower(r, helyek,map);
                 helyek[i] = towerek[i].j;
                 //Console.WriteLine("helyek {0} tower.j {1}", helyek[i], towerek[i].j);
             }
@@ -45,7 +45,7 @@ namespace feleveshazi
         }
         static Zombie[] zombieLetrehozas()
         {
-            Zombie[] zombik = new Zombie[5];
+            Zombie[] zombik = new Zombie[15];
             for (int i = 0; i < zombik.Length; i++)
             {
                 zombik[i] = new Zombie();
@@ -61,46 +61,103 @@ namespace feleveshazi
             string asd = Console.ReadLine();
             if (asd=="Start")
             {
+                int zombieszamlalo = 0;
                 while (!jatekVege(zombik, map))
                 {
                     towerLoves(towerek, zombik, map);
                     //cooldown ++, lo a tower ha 0 a cd, range-n beluli zombiekat
                     Console.Clear();
-                    zombikLeptetese(zombik,towerek);
+                    zombikLeptetese(zombik,towerek,zombieszamlalo);
+                    if (zombieszamlalo!=zombik.Length)
+                    {
+                        zombieszamlalo++;
+                    }
                     zombiKiiratas(zombik);
                     map.MapKiiratas();
                     Console.WriteLine();
-                    Console.WriteLine("tower cd {0} indexe {1}", towerek[0].cooldown, towerek[0].j);
-                    Console.WriteLine("tower cd {0} indexe {1}", towerek[1].cooldown, towerek[1].j);
-                    Console.WriteLine("tower cd {0} indexe {1}", towerek[2].cooldown, towerek[2].j);
-                    Console.WriteLine("tower cd {0} indexe {1}", towerek[3].cooldown, towerek[3].j);
-                    Console.WriteLine("tower cd {0} indexe {1}", towerek[4].cooldown, towerek[4].j);
+                    for (int i = 0; i < towerek.Length; i++)
+                    {
+                        Console.WriteLine("tower cd {0} indexe {1} range {2} minrange {3} maxrange {4}", towerek[i].cooldown, towerek[i].j, towerek[i].range, towerek[i].minRange, towerek[i].maxRange);
+                    }
+                    for (int i = 0; i < zombik.Length; i++)
+                    {
+                        Console.WriteLine("zombi hol jar {0}, hanyadik zombie {1}", zombik[i].index, i);
+                    }
                     towerKiiratas(towerek);
-                    Thread.Sleep(300);
+                    Thread.Sleep(500);
+                }
+                if (jatekVege(zombik,map))
+                {
+                    jatekVege(zombik,map);
                 }
             }
         }
+        static bool beErtEgyZombie(Zombie[] zombik, Map map)
+        {
+            bool beErt = false;
+            for (int i = 0; i < zombik.Length; i++)
+            {
+                if (zombik[i].beErtE(map)==true)
+                {
+                    beErt = true;
+                }
+            }
+            return beErt;
+        }
+        static bool nincsZombie(Zombie[] zombik)
+        {
+            bool meghaltak = false;
+            double[] zombikIndexe = new double[zombik.Length];
+            double atlag = 0;
+            for (int i = 0; i < zombik.Length; i++)
+            {
+                zombikIndexe[i] = (double)zombik[i].index;
+                atlag += (double)zombik[i].index;
+            }
+            atlag = atlag / zombik.Length;
+            if (atlag == -1)
+            {
+                meghaltak = true;
+            }
+            return meghaltak;
+        }
         static bool jatekVege(Zombie[] zombik, Map map)
         {
-            //beert egy zombie, vagy nem maradt zombie
-            bool vegevan = false;
-            int[] zombikIndexe = new int[zombik.Length];
-            for (int i = 0; i < zombik.Length; i++)
+            //end screen
+            bool vegeVan = false;
+            if (nincsZombie(zombik) == true)
             {
-                zombikIndexe[i] = zombik[i].index;
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("A jateknak vege!");
+                Console.WriteLine("Nem maradt tobb zombie!");
+                Console.ResetColor();
+                vegeVan = true;
             }
-            if (zombikIndexe.Contains(map.mapHossz-1))
+            if (beErtEgyZombie(zombik,map))
             {
-                return true;
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("A jateknak vege!");
+                Console.WriteLine("Beert egy zombie a celba!");
+                Console.ResetColor();
+                vegeVan = true;
             }
-            return vegevan;
+            return vegeVan;
         }
-        static void zombikLeptetese(Zombie[] zombik, Tower[] towerek)
+        static void zombikLeptetese(Zombie[] zombik, Tower[] towerek,int szamlalo)
         {
-            for (int i = 0; i < zombik.Length; i++)
+            //lepnek a zombiek, csokken a cooldown
+            for (int i = 0; i < szamlalo; i++)
             {
                 zombik[i].lepes();
-                towerek[i].cooldown--;
+            }
+            for (int i = 0; i < towerek.Length; i++)
+            {
+                if (towerek[i].cooldown>0)
+                {
+                    towerek[i].cooldown--;
+                }
             }
             
         }

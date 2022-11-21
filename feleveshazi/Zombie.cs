@@ -27,7 +27,7 @@ namespace feleveshazi
             {
                 Console.SetCursorPosition(this.index, 3);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.Write('M');
+                Console.Write('Z');
                 Console.ResetColor();
             }
         }
