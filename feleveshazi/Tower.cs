@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ namespace feleveshazi
         public int cooldown { get; set; }
         public int minRange { get; set; }
         public int maxRange { get; set; }
+
         public Tower(Random r, int[] helyek, Map map)
         {
             int hely = r.Next(0, 50);
@@ -66,48 +68,131 @@ namespace feleveshazi
             return helyek.Contains(j);
         }
 
-        public bool vanEZombie(Zombie[] zombik, Map map)
+
+        public void loves(Zombie[] zombik)
         {
-            bool vanE = false;
+            #region probalkozasok
+            //kozelseget probal nezni
             //for (int i = 0; i < zombik.Length; i++)
             //{
-            //    if (this.j - this.range > -1 && map.mapHossz > this.j + this.range)
+            //    int[] rangek = new int[range];
+            //    for (int a = 1; a < rangek.Length + 1; a++)
             //    {
-            //        if (zombik[i].index == this.j || zombik[i].index >= this.j - this.range || zombik[i].index <= this.j + this.range && this.cooldown == 0)
+            //        rangek[i] = a;
+            //    }
+            //    if (cooldown == 0)
+            //    {
+            //        if (zombik[i].index == j)
             //        {
-            //            return true;
+            //            zombik[i].index = -1;
+            //            cooldown = 5;
+            //        }
+            //        //tower elott rangen belul
+            //        else if (zombik[i].index >= minRange && j > zombik[i].index)
+            //        {
+            //            for (int a = 0; a < rangek.Length+1; a++)
+            //            {
+            //                //tower bal oldala
+            //                if (Math.Abs(rangek[a]-j) == 1)
+            //                {
+
+            //                }
+            //                else if (true)
+            //                {
+
+            //                }
+
+            //            }
+            //            zombik[i].index = -1;
+            //            cooldown = 5;
+            //        }
+            //        //tower felett
+
+            //        //tower utan rangen belul
+            //        else if (zombik[i].index > j && maxRange >= zombik[i].index)
+            //        {
+            //            for (int a = j + 1; a < maxRange; a++)
+            //            {
+            //                if (zombik[a].index != -1)
+            //                {
+            //                    zombik[a].index = -1;
+            //                    cooldown = 5;
+            //                }
+            //            }
             //        }
             //    }
             //}
-            for (int i = 0; i < zombik.Length; i++)
-            {
-                if (j == zombik[i].index)
-                {
-                    vanE = true;
-                }
-            }
-            return vanE;
-        }
-        public void loves(Zombie[] zombik, Map map)
-        {
+            //kozelseget nem nez
+            //for (int i = 0; i < zombik.Length; i++)
+            //{
+            //    if (cooldown == 0)
+            //    {
+            //        if (zombik[i].index == j)
+            //        {
+            //            zombik[i].index = -1;
+            //            cooldown = 5;
+            //        }
+            //        else if (zombik[i].index >= minRange && j > zombik[i].index)
+            //        {
+            //            int hol = 1;
+            //            while (hol <= range)
+            //            {
+            //                hol++;
+            //            }
+            //            zombik[i].index = -1;
+            //            cooldown = 5;
+            //        }
+            //        else if (zombik[i].index > j && maxRange >= zombik[i].index)
+            //        {
+            //            zombik[i].index = -1;
+            //            cooldown = 5;
+            //        }
+            //    }
+            //}
+            #endregion probalkozasok
             for (int i = 0; i < zombik.Length; i++)
             {
                 if (cooldown == 0)
                 {
-                    if (zombik[i].index >= minRange && j >= zombik[i].index)
+                    if (zombik[i].index == j)
                     {
                         zombik[i].index = -1;
                         cooldown = 5;
                     }
-                    else if (zombik[i].index == j)
+                    else if ((zombik[i].index >= minRange && j > zombik[i].index))
                     {
-                        zombik[i].index = -1;
-                        cooldown = 5;
+                        int hol = 1;
+                        while (hol < range + 1)
+                        {
+                            //j 5 z 2 range 3
+                            if (zombik[i].index == j - hol)
+                            {
+                                zombik[i].index = -1;
+                                cooldown = 5;
+                                hol = range + 1;
+                            }
+                            else
+                            {
+                                hol++;
+                            }
+                        }
                     }
-                    else if (zombik[i].index >= j && maxRange >= zombik[i].index)
+                    else if ((zombik[i].index > j && maxRange >= zombik[i].index))
                     {
-                        zombik[i].index = -1;
-                        cooldown = 5;
+                        int hol = 1;
+                        while (hol < range + 1)
+                        {
+                            if (zombik[i].index == j + hol)
+                            {
+                                zombik[i].index = -1;
+                                cooldown = 5;
+                                hol = range + 1;
+                            }
+                            else
+                            {
+                                hol++;
+                            }
+                        }
                     }
                 }
             }

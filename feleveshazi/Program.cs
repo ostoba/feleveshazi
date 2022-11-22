@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 
 namespace feleveshazi
@@ -14,8 +10,49 @@ namespace feleveshazi
             Map map = mapLetrehozas();
             Tower[] towerek = towerLetrehozas(map);
             Zombie[] zombik = zombieLetrehozas();
-            Jatek(zombik, map, towerek);
+            int[] zombikhelyei = new int[zombik.Length];
+            Jatek(zombik, map, towerek, zombikhelyei);
             Console.ReadLine();
+        }
+        static void Jatek(Zombie[] zombik, Map map, Tower[] towerek, int[] zombikhelyei)
+        {
+            map.MapKiiratas();
+            towerKiiratas(towerek);
+            zombieKiiratas(zombik);
+            Console.SetCursorPosition(0, 10);
+            Console.WriteLine("Indulhat a jatek? ('Start')");
+            string input = Console.ReadLine();
+            if (input == "Start")
+            {
+                int zombieszamlalo = 0;
+                while (!jatekVege(zombik, map))
+                {
+                    towerLoves(towerek, zombik, zombikhelyei);
+                    Console.Clear();
+                    zombikLeptetese(zombik, towerek, zombieszamlalo, zombikhelyei);
+                    if (zombieszamlalo != zombik.Length)
+                    {
+                        zombieszamlalo++;
+                    }
+                    zombieKiiratas(zombik);
+                    map.MapKiiratas();
+                    Console.WriteLine();
+                    for (int i = 0; i < towerek.Length; i++)
+                    {
+                        Console.WriteLine("tower cd {0} indexe {1} range {2} minrange {3} maxrange {4}", towerek[i].cooldown, towerek[i].j, towerek[i].range, towerek[i].minRange, towerek[i].maxRange);
+                    }
+                    for (int i = 0; i < zombik.Length; i++)
+                    {
+                        Console.WriteLine("zombi hol jar {0}, hanyadik zombie {1}", zombik[i].index, i);
+                    }
+                    towerKiiratas(towerek);
+                    Thread.Sleep(7500);
+                }
+                if (jatekVege(zombik, map))
+                {
+                    jatekVege(zombik, map);
+                }
+            }
         }
         static Tower[] towerLetrehozas(Map map)
         {
@@ -24,7 +61,7 @@ namespace feleveshazi
             int[] helyek = new int[5] { -1, -1, -1, -1, -1 };
             for (int i = 0; i < towerek.Length; i++)
             {
-                towerek[i] = new Tower(r, helyek,map);
+                towerek[i] = new Tower(r, helyek, map);
                 helyek[i] = towerek[i].j;
                 //Console.WriteLine("helyek {0} tower.j {1}", helyek[i], towerek[i].j);
             }
@@ -52,52 +89,13 @@ namespace feleveshazi
             }
             return zombik;
         }
-        static void Jatek(Zombie[] zombik, Map map, Tower[] towerek)
-        {
-            map.MapKiiratas();
-            towerKiiratas(towerek);
-            Console.SetCursorPosition(0, 10);
-            Console.WriteLine("Indulhat a jatek? ('Start')");
-            string asd = Console.ReadLine();
-            if (asd=="Start")
-            {
-                int zombieszamlalo = 0;
-                while (!jatekVege(zombik, map))
-                {
-                    towerLoves(towerek, zombik, map);
-                    //cooldown ++, lo a tower ha 0 a cd, range-n beluli zombiekat
-                    Console.Clear();
-                    zombikLeptetese(zombik,towerek,zombieszamlalo);
-                    if (zombieszamlalo!=zombik.Length)
-                    {
-                        zombieszamlalo++;
-                    }
-                    zombiKiiratas(zombik);
-                    map.MapKiiratas();
-                    Console.WriteLine();
-                    for (int i = 0; i < towerek.Length; i++)
-                    {
-                        Console.WriteLine("tower cd {0} indexe {1} range {2} minrange {3} maxrange {4}", towerek[i].cooldown, towerek[i].j, towerek[i].range, towerek[i].minRange, towerek[i].maxRange);
-                    }
-                    for (int i = 0; i < zombik.Length; i++)
-                    {
-                        Console.WriteLine("zombi hol jar {0}, hanyadik zombie {1}", zombik[i].index, i);
-                    }
-                    towerKiiratas(towerek);
-                    Thread.Sleep(500);
-                }
-                if (jatekVege(zombik,map))
-                {
-                    jatekVege(zombik,map);
-                }
-            }
-        }
+
         static bool beErtEgyZombie(Zombie[] zombik, Map map)
         {
             bool beErt = false;
             for (int i = 0; i < zombik.Length; i++)
             {
-                if (zombik[i].beErtE(map)==true)
+                if (zombik[i].beErtE(map) == true)
                 {
                     beErt = true;
                 }
@@ -134,7 +132,7 @@ namespace feleveshazi
                 Console.ResetColor();
                 vegeVan = true;
             }
-            if (beErtEgyZombie(zombik,map))
+            if (beErtEgyZombie(zombik, map))
             {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -145,34 +143,36 @@ namespace feleveshazi
             }
             return vegeVan;
         }
-        static void zombikLeptetese(Zombie[] zombik, Tower[] towerek,int szamlalo)
+        static void zombikLeptetese(Zombie[] zombik, Tower[] towerek, int szamlalo, int[] zombikhelyei)
         {
             //lepnek a zombiek, csokken a cooldown
             for (int i = 0; i < szamlalo; i++)
             {
                 zombik[i].lepes();
+                zombikhelyei[i] = zombik[i].index;
             }
             for (int i = 0; i < towerek.Length; i++)
             {
-                if (towerek[i].cooldown>0)
+                if (towerek[i].cooldown > 0)
                 {
                     towerek[i].cooldown--;
                 }
             }
-            
+
         }
-        static void zombiKiiratas(Zombie[] zombik)
+        static void zombieKiiratas(Zombie[] zombik)
         {
             for (int i = 0; i < zombik.Length; i++)
             {
                 zombik[i].zombieKiiratas();
             }
         }
-        static void towerLoves(Tower[] towerek, Zombie[] zombik, Map map)
+        static void towerLoves(Tower[] towerek, Zombie[] zombik, int[] zombikhelyei)
         {
             for (int i = 0; i < towerek.Length; i++)
             {
-                towerek[i].loves(zombik, map);
+                //towerek[i].loves(zombik,zombikhelyei); 
+                towerek[i].loves(zombik);
             }
         }
     }
