@@ -10,10 +10,10 @@ namespace feleveshazi
     class Tower
     {
         public int j { get; set; }
-        public int range { get; set; }
+        public int range { get; }
         public int cooldown { get; set; }
-        public int minRange { get; set; }
-        public int maxRange { get; set; }
+        public int minRange { get; }
+        public int maxRange { get; }
 
         public Tower(Random r, int[] helyek, Map map)
         {
@@ -63,7 +63,7 @@ namespace feleveshazi
             Console.ResetColor();
             Console.SetCursorPosition(0, 0);
         }
-        public bool vanEMarOttTower(int[] helyek, int j)
+        private bool vanEMarOttTower(int[] helyek, int j)
         {
             return helyek.Contains(j);
         }
@@ -162,9 +162,8 @@ namespace feleveshazi
                     else if ((zombik[i].index >= minRange && j > zombik[i].index))
                     {
                         int hol = 1;
-                        while (hol < range + 1)
+                        while (hol <= range)
                         {
-                            //j 5 z 2 range 3
                             if (zombik[i].index == j - hol)
                             {
                                 zombik[i].index = -1;
@@ -180,7 +179,7 @@ namespace feleveshazi
                     else if ((zombik[i].index > j && maxRange >= zombik[i].index))
                     {
                         int hol = 1;
-                        while (hol < range + 1)
+                        while (hol <= range)
                         {
                             if (zombik[i].index == j + hol)
                             {

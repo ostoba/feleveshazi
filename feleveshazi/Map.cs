@@ -8,7 +8,7 @@ namespace feleveshazi
 {
     internal class Map
     {
-        public int mapHossz { get; set; }
+        public int mapHossz { get;}
         public Map(int mapHossz)
         {
             this.mapHossz = mapHossz;
