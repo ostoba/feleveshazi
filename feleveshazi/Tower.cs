@@ -67,8 +67,6 @@ namespace feleveshazi
         {
             return helyek.Contains(j);
         }
-
-
         public void loves(Zombie[] zombik)
         {
             #region probalkozasok
