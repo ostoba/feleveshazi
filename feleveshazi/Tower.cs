@@ -15,14 +15,17 @@ namespace feleveshazi
         public int minRange { get; }
         public int maxRange { get; }
 
-        public Tower(Random r, int[] helyek, Map map)
+        public Tower(Random r, Map map, int j)
         {
-            int hely = r.Next(0, 50);
-            while (vanEMarOttTower(helyek, hely))
-            {
-                hely = r.Next(0, 50);
-            }
-            j = hely;
+            #region randomhelyretorony
+            //int hely = r.Next(0, 50);
+            //while (vanEMarOttTower(helyek, hely))
+            //{
+            //hely = r.Next(0, 50);
+            //}
+            //j = hely;
+            #endregion
+            this.j = j;
             range = r.Next(1, 4);
             cooldown = 0;
             if (0 > j - range)
@@ -42,11 +45,9 @@ namespace feleveshazi
                 maxRange = j + range;
             }
         }
-
-        public void towerKiiratas(Random r)
+        public void towerKiiratas()
         {
             Console.SetCursorPosition(j, 6);
-            //ConsoleColor szin = (ConsoleColor)r.Next(1, 16);
             if (range == 1)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -61,7 +62,6 @@ namespace feleveshazi
             }
             Console.Write('O');
             Console.ResetColor();
-            Console.SetCursorPosition(0, 0);
         }
         private bool vanEMarOttTower(int[] helyek, int j)
         {

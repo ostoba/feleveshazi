@@ -14,8 +14,8 @@ namespace feleveshazi
             this.mapHossz = mapHossz;
         }
         public void MapKiiratas()
-        { 
-            Console.SetCursorPosition(0, 0);
+        {
+            Console.SetCursorPosition(0,0);
             for (int i = 0; i < mapHossz; i++)
             {
                 Console.Write('-');

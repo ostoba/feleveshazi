@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 
 namespace feleveshazi
@@ -8,8 +9,8 @@ namespace feleveshazi
         static void Main(string[] args)
         {
             Map map = mapLetrehozas();
-            Tower[] towerek = towerLetrehozas(map);
-            Zombie[] zombik = zombieLetrehozas();
+            Tower[] towerek = new Tower[5];
+            Zombie[] zombik = zombieLetrehozas(50);
             int[] zombikhelyei = new int[zombik.Length];
             Jatek(zombik, map, towerek, zombikhelyei);
             Console.ReadLine();
@@ -17,55 +18,97 @@ namespace feleveshazi
         static void Jatek(Zombie[] zombik, Map map, Tower[] towerek, int[] zombikhelyei)
         {
             map.MapKiiratas();
-            towerKiiratas(towerek);
+            towerek = towerLetrehozas(map);
             zombieKiiratas(zombik);
-            Console.SetCursorPosition(0, 10);
-            Console.WriteLine("Indulhat a jatek? ('Start')");
-            string input = Console.ReadLine();
-            if (input == "Start")
+            int zombieszamlalo = 0;
+            while (!jatekVege(zombik, map))
             {
-                int zombieszamlalo = 0;
-                while (!jatekVege(zombik, map))
+                towerLoves(towerek, zombik);
+                Console.Clear();
+                zombikLeptetese(zombik, towerek, zombieszamlalo, zombikhelyei);
+                if (zombieszamlalo != zombik.Length)
                 {
-                    towerLoves(towerek, zombik);
-                    Console.Clear();
-                    zombikLeptetese(zombik, towerek, zombieszamlalo, zombikhelyei);
-                    if (zombieszamlalo != zombik.Length)
-                    {
-                        zombieszamlalo++;
-                    }
-                    zombieKiiratas(zombik);
-                    map.MapKiiratas();
-                    Console.WriteLine();
-                    #region ellenorzesek
-                    //for (int i = 0; i < towerek.Length; i++)
-                    //{
-                    //    Console.WriteLine("tower cd {0} indexe {1} range {2} minrange {3} maxrange {4}", towerek[i].cooldown, towerek[i].j, towerek[i].range, towerek[i].minRange, towerek[i].maxRange);
-                    //}
-                    //for (int i = 0; i < zombik.Length; i++)
-                    //{
-                    //    Console.WriteLine("zombi hol jar {0}, hanyadik zombie {1}", zombik[i].index, i);
-                    //}
-                    #endregion ellenorzesek
-                    towerKiiratas(towerek);
-                    Thread.Sleep(500);
+                    zombieszamlalo++;
                 }
-                if (jatekVege(zombik, map))
-                {
-                    jatekVege(zombik, map);
-                }
+                zombieKiiratas(zombik);
+                map.MapKiiratas();
+                Console.WriteLine();
+                #region ellenorzesek
+                //for (int i = 0; i < towerek.Length; i++)
+                //{
+                //    Console.WriteLine("tower cd {0} indexe {1} range {2} minrange {3} maxrange {4}", towerek[i].cooldown, towerek[i].j, towerek[i].range, towerek[i].minRange, towerek[i].maxRange);
+                //}
+                //for (int i = 0; i < zombik.Length; i++)
+                //{
+                //    Console.WriteLine("zombi hol jar {0}, hanyadik zombie {1}", zombik[i].index, i);
+                //}
+                #endregion ellenorzesek
+                towerKiiratas(towerek);
+                Thread.Sleep(500);
+            }
+            if (jatekVege(zombik, map))
+            {
+                jatekVege(zombik, map);
             }
         }
         static Tower[] towerLetrehozas(Map map)
         {
             Random r = new Random();
+            #region randomhelyreletrehozas
+            //Random r = new Random();
+            //int[] helyek = new int[5] { -1, -1, -1, -1, -1 };
+            //for (int i = 0; i < towerek.Length; i++)
+            //{
+            //    towerek[i] = new Tower(r, helyek, map);
+            //    helyek[i] = towerek[i].j;
+            //    //Console.WriteLine("helyek {0} tower.j {1}", helyek[i], towerek[i].j);
+            //}
+            #endregion 
             Tower[] towerek = new Tower[5];
             int[] helyek = new int[5] { -1, -1, -1, -1, -1 };
-            for (int i = 0; i < towerek.Length; i++)
+            int[] leraktaMar = new int[5] { -1, -1, -1, -1, -1 };
+            int szamlalo = 0;
+            int sor = szamlalo + 9;
+            Console.WriteLine();
+            Console.WriteLine("Kerem adja meg hogy hanyadik tornyot hova rakjuk le! Minta : 1 40 , Elso torony 40. helyre.");
+            Console.WriteLine("Ot torony van, 50. az utolso hely!");
+            while (towerek.Length > szamlalo)
             {
-                towerek[i] = new Tower(r, helyek, map);
-                helyek[i] = towerek[i].j;
-                //Console.WriteLine("helyek {0} tower.j {1}", helyek[i], towerek[i].j);
+                Console.SetCursorPosition(0, sor);
+                sor++;
+                //input = 1 40 , elso tower 40edik hely, towerek[1-1] 40-1es index
+                string[] input = Console.ReadLine().Split(' ');
+                int hanyadik = int.Parse(input[0]) - 1;
+                int hova = int.Parse(input[1]) - 1;
+                while (helyek.Contains(hova))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Ezen a helyen mar van torony, probald ujra!");
+                    Thread.Sleep(1500);
+                    sorTorles();
+                    Console.ResetColor();
+                    input = Console.ReadLine().Split(' ');
+                    hanyadik = int.Parse(input[0]) - 1;
+                    hova = int.Parse(input[1]) - 1;
+                    sor++;
+                }
+                while (leraktaMar.Contains(hanyadik))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Ezt a tornyot mar leraktad, probald ujra!");
+                    Thread.Sleep(1500);
+                    sorTorles();
+                    Console.ResetColor();
+                    input = Console.ReadLine().Split(' ');
+                    hanyadik = int.Parse(input[0]) - 1;
+                    hova = int.Parse(input[1]) - 1;
+                    sor++;
+                }
+                towerek[hanyadik] = new Tower(r, map, hova);
+                towerek[hanyadik].towerKiiratas();
+                helyek[szamlalo] = hova;
+                leraktaMar[szamlalo] = hanyadik;
+                szamlalo++;
             }
             return towerek;
         }
@@ -74,7 +117,7 @@ namespace feleveshazi
             Random r = new Random();
             for (int i = 0; i < towerek.Length; i++)
             {
-                towerek[i].towerKiiratas(r);
+                towerek[i].towerKiiratas();
             }
         }
         static Map mapLetrehozas()
@@ -82,9 +125,9 @@ namespace feleveshazi
             Map map = new Map(50);
             return map;
         }
-        static Zombie[] zombieLetrehozas()
+        static Zombie[] zombieLetrehozas(int mennyiZombie)
         {
-            Zombie[] zombik = new Zombie[15];
+            Zombie[] zombik = new Zombie[mennyiZombie];
             for (int i = 0; i < zombik.Length; i++)
             {
                 zombik[i] = new Zombie();
@@ -175,6 +218,12 @@ namespace feleveshazi
             {
                 towerek[i].loves(zombik);
             }
+        }
+        static void sorTorles()
+        {
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            Console.Write(new string(' ', Console.BufferWidth));
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
         }
     }
 }
